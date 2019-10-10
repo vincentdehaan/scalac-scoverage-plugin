@@ -172,7 +172,10 @@ class ScoverageInstrumentationComponent(val global: Global, extraAfterPhase: Opt
       )
     }
 
-    override def transform(tree: Tree) = process(tree)
+    override def transform(tree: Tree) = {
+      println("THIS IS A CUSTOM SCOVERAGE PLUGIN")
+      process(tree)
+    }
 
     def transformStatements(trees: List[Tree]): List[Tree] = trees.map(process)
 

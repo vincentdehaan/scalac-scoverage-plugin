@@ -53,10 +53,18 @@ object Invoker {
         threadFiles.set(files)
       }
       val writer = files.getOrElseUpdate(dataDir, new FileWriter(measurementFile(dataDir), true))
-      writer.append(Integer.toString(id)).append("\n").flush()
+      writer.append(Integer.toString(id)).append(" ").append(getCallingScalaTest).append("\n").flush()
 
       ids.put(id, ())
     }
+  }
+
+  // As we cannot access the class information in the stack trace in JDK 8, we apply this heuristic
+  // to find the test name.
+  def getCallingScalaTest: String = {
+    val st = Thread.currentThread.getStackTrace
+    val idx = st.indexWhere(_.getClassName.startsWith("org.scalatest")) - 2
+    if(idx > 0) st(idx).getClassName else ""
   }
 
   def measurementFile(dataDir: File): File = measurementFile(dataDir.getAbsolutePath)
